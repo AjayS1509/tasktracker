@@ -1,8 +1,9 @@
 "use client";
 import { cn } from "@/utils/cn";
 import { AnimatePresence, motion } from "framer-motion";
-import Link from "next/link";
 import { useState } from "react";
+
+type Status = "In Progress" | "Done" | "To Do";
 
 export const HoverEffect = ({
   items,
@@ -14,7 +15,7 @@ export const HoverEffect = ({
     title: string;
     description: string;
     link: string;
-    status: string;
+    status: Status;
   }[];
   className?: string;
   handleClickDelete?: (item: {
@@ -35,6 +36,12 @@ export const HoverEffect = ({
   ) => void;
 }) => {
   let [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
+  const color: Record<Status, string> = {
+    "In Progress": "text-blue-500",
+    Done: "text-green-500",
+    "To Do": "text-yellow-300",
+  };
 
   return (
     <div
@@ -73,8 +80,10 @@ export const HoverEffect = ({
             <div className=" line-clamp-4 h-40">
               <CardDescription>{item.description}</CardDescription>
             </div>
-            <div className="mb-4 text-white-400 tracking-wide leading-relaxed text-sm">
-              Status: {item.status}
+            <div
+              className={`mb-4 text-white-400 tracking-wide leading-relaxed text-sm text-white flex gap-1`}
+            >
+              Status: <p className={color[item.status]}>{item.status}</p>
             </div>
             <div className="flex justify-between mx-3">
               <button
