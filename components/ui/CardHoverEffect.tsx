@@ -3,8 +3,6 @@ import { cn } from "@/utils/cn";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 
-type Status = "In Progress" | "Done" | "To Do";
-
 export const HoverEffect = ({
   items,
   className,
@@ -15,7 +13,7 @@ export const HoverEffect = ({
     title: string;
     description: string;
     link: string;
-    status: Status;
+    status: string;
   }[];
   className?: string;
   handleClickDelete?: (item: {
@@ -36,12 +34,6 @@ export const HoverEffect = ({
   ) => void;
 }) => {
   let [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-
-  const color: Record<Status, string> = {
-    "In Progress": "text-blue-500",
-    Done: "text-green-500",
-    "To Do": "text-yellow-300",
-  };
 
   return (
     <div
@@ -83,7 +75,18 @@ export const HoverEffect = ({
             <div
               className={`mb-4 text-white-400 tracking-wide leading-relaxed text-sm text-white flex gap-1`}
             >
-              Status: <p className={color[item.status]}>{item.status}</p>
+              Status:{" "}
+              <p
+                className={
+                  item.status == "To Do"
+                    ? "text-yellow-300"
+                    : item.status == "Done"
+                    ? "text-green-500"
+                    : "text-blue-500"
+                }
+              >
+                {item.status}
+              </p>
             </div>
             <div className="flex justify-between mx-3">
               <button
