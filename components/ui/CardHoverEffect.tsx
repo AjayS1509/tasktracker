@@ -12,14 +12,12 @@ export const HoverEffect = ({
   items: {
     title: string;
     description: string;
-    link: string;
     status: string;
   }[];
   className?: string;
   handleClickDelete?: (item: {
     title: string;
     description: string;
-    link: string;
     status: string;
   }) => void;
 
@@ -27,7 +25,6 @@ export const HoverEffect = ({
     item: {
       title: string;
       description: string;
-      link: string;
       status: string;
     },
     idx: number

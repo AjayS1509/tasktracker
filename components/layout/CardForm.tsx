@@ -4,7 +4,6 @@ import RadioButton from "../ui/RadioButton";
 interface Item {
   title: string;
   description: string;
-  link: string;
   status: string;
   idx: number;
 }
@@ -15,14 +14,12 @@ interface CardFormProps {
   handleClickUpdateData?: (item: {
     title: string;
     description: string;
-    link: string;
     status: string;
     idx: number;
   }) => void;
   handleCreateData?: (item: {
     title: string;
     description: string;
-    link: string;
     status: string;
   }) => void;
   create?: boolean;
@@ -38,7 +35,6 @@ const CardForm: React.FC<CardFormProps> = ({
   const [visibility, setVisibility] = useState({
     title: items[0]?.title ?? "title",
     description: items[0]?.description ?? "description",
-    link: items[0]?.link ?? "",
     status: items[0]?.status ?? "To Do",
     idx: items[0]?.idx ?? 0,
   });
@@ -46,7 +42,6 @@ const CardForm: React.FC<CardFormProps> = ({
     setVisibility({
       title: items[0]?.title ?? "title",
       description: items[0]?.description ?? "description",
-      link: items[0]?.link ?? "",
       status: items[0]?.status ?? "To Do",
       idx: items[0]?.idx ?? 0,
     });
@@ -83,14 +78,6 @@ const CardForm: React.FC<CardFormProps> = ({
           value={visibility.description}
           onChange={(e) =>
             setVisibility({ ...visibility, description: e.target.value })
-          }
-        />
-        <input
-          type="text"
-          placeholder="link"
-          value={visibility.link}
-          onChange={(e) =>
-            setVisibility({ ...visibility, link: e.target.value })
           }
         />
         <RadioButton

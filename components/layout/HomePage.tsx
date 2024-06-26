@@ -10,14 +10,12 @@ import Dropdown from "../ui/DropDown";
 interface Item {
   title: string;
   description: string;
-  link: string;
   status: string;
 }
 
 interface Itemupdate {
   title: string;
   description: string;
-  link: string;
   status: string;
   idx: number;
 }
@@ -30,7 +28,6 @@ const HomePage = () => {
   const initialState: Itemupdate = {
     title: "",
     description: "",
-    link: "",
     status: "To Do",
     idx: 0,
   };
@@ -41,7 +38,6 @@ const HomePage = () => {
   const handleClickDelete = (item: {
     title: string;
     description: string;
-    link: string;
     status: string;
   }) => {
     const filterDelete = state.filter(
@@ -62,7 +58,6 @@ const HomePage = () => {
       ...visiability[0],
       title: item.title,
       description: item.description,
-      link: item.link,
       status: item.status,
       idx: idx,
     };
@@ -77,7 +72,6 @@ const HomePage = () => {
   const handleClickUpdateData = async (item: {
     title: string;
     description: string;
-    link: string;
     status: string;
     idx: number;
   }) => {
@@ -99,7 +93,6 @@ const HomePage = () => {
   const handleCreateData = async (item: {
     title: string;
     description: string;
-    link: string;
     status: string;
   }) => {
     await setState((prevState) => [...prevState, item]);
