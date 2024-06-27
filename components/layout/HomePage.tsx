@@ -194,7 +194,7 @@ const HomePage: React.FC = () => {
   };
 
   if (state.length === 0) {
-    return null;
+    return <h1>loading....</h1>;
   }
 
   return (
