@@ -88,7 +88,7 @@ export const HoverEffect = ({
             <div className="flex justify-between mx-3">
               <button
                 type="button"
-                className="px-6 py-2 border border-green-400 rounded-lg bg-green-500"
+                className="px-6 py-2 border border-green-400 rounded-lg bg-green-500 text-white"
                 onClick={() =>
                   handleClickUpdate && handleClickUpdate(item, idx)
                 }
@@ -97,7 +97,7 @@ export const HoverEffect = ({
               </button>
               <button
                 type="button"
-                className="px-6 py-2 border border-red-400 rounded-lg bg-red-500"
+                className="px-6 py-2 border border-red-400 rounded-lg bg-red-500 text-white"
                 onClick={() => handleClickDelete && handleClickDelete(item)}
               >
                 delete

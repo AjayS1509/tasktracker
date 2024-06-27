@@ -4,8 +4,8 @@ import { HoverEffect } from "../ui/CardHoverEffect";
 import { projects } from "@/data";
 import Overlay from "../ui/Overlay";
 import CardForm from "./CardForm";
-import { title } from "process";
 import Dropdown from "../ui/DropDown";
+import toast from "react-hot-toast";
 
 interface Item {
   title: string;
@@ -13,37 +13,69 @@ interface Item {
   status: string;
 }
 
-interface Itemupdate {
+interface ItemUpdate {
   title: string;
   description: string;
   status: string;
   idx: number;
 }
 
-const HomePage = () => {
-  const [state, setState] = useState(projects);
-  const originalData = useRef(projects);
+interface ItemWithId extends Item {
+  _id: string;
+}
+
+const HomePage: React.FC = () => {
+  const [state, setState] = useState<ItemWithId[]>([]);
+  const originalData = useRef<ItemWithId[]>([]);
   const [overlaycall, setOverlaycall] = useState(false);
   const [create, setCreate] = useState(false);
-  const initialState: Itemupdate = {
+  const initialState: ItemUpdate = {
     title: "",
     description: "",
     status: "To Do",
     idx: 0,
   };
-
-  const [visiability, setVisability] = useState([initialState]);
+  const [visiability, setVisability] = useState<ItemUpdate[]>([initialState]);
   const [changeHappen, setChangeHappen] = useState(false);
 
-  const handleClickDelete = (item: {
-    title: string;
-    description: string;
-    status: string;
-  }) => {
+  useEffect(() => {
+    fetch("/api/task")
+      .then((res) => res.json())
+      .then((data: ItemWithId[]) => {
+        setState(data);
+        originalData.current = data;
+      })
+      .catch((error) => console.error("Error fetching data!", error));
+  }, []);
+
+  const handleClickDelete = async (item: Item) => {
     const filterDelete = state.filter(
-      (d) => !(d.title == item.title && d.description == item.description)
+      (d) => !(d.title === item.title && d.description === item.description)
     );
-    setState(filterDelete);
+
+    const itemToDelete = state.find(
+      (d) => d.title === item.title && d.description === item.description
+    ) as ItemWithId;
+
+    if (itemToDelete) {
+      const deletepromise = new Promise<void>(async (resolve, reject) => {
+        const response = await fetch(`/api/task?_id=${itemToDelete._id}`, {
+          method: "DELETE",
+        });
+        if (response.ok) {
+          setState(filterDelete);
+          resolve();
+        } else {
+          reject();
+        }
+      });
+
+      await toast.promise(deletepromise, {
+        loading: "Deleting...",
+        success: "Deleted Successfully",
+        error: "Error",
+      });
+    }
   };
 
   useEffect(() => {
@@ -63,25 +95,47 @@ const HomePage = () => {
     };
     const updatedArray = [...visiability];
     updatedArray[0] = updatedItem;
-    await setVisability(updatedArray);
-    await setCreate(false);
-    await setOverlaycall(true);
-    // Update the entire visibility state with the selected item
+    setVisability(updatedArray);
+    setCreate(false);
+    setOverlaycall(true);
   };
 
-  const handleClickUpdateData = async (item: {
-    title: string;
-    description: string;
-    status: string;
-    idx: number;
-  }) => {
-    await setState((prevState) =>
-      prevState.map((state, index) =>
-        index === item.idx ? { ...state, ...item } : state
-      )
+  const handleClickUpdateData = async (item: ItemUpdate) => {
+    const itemToUpdate = state.find(
+      (d, i) => d && i === item.idx
+    ) as ItemWithId;
+
+    itemToUpdate.title = item.title;
+    itemToUpdate.description = item.description;
+    itemToUpdate.status = item.status;
+
+    const updatepromise = new Promise<void>(async (resolve, reject) => {
+      const response = await fetch("/api/task", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(itemToUpdate),
+      });
+      if (response.ok) {
+        resolve();
+      } else reject();
+    });
+
+    toast.promise(
+      updatepromise.then((d) => {
+        setState((prevState) =>
+          prevState.map((state, index) =>
+            index === item.idx ? { ...state, ...item } : state
+          )
+        );
+        setOverlaycall(false);
+        setChangeHappen(true);
+      }),
+      {
+        loading: "Updating Task...",
+        success: "Updated Successfully",
+        error: "Error",
+      }
     );
-    await setOverlaycall(false);
-    await setChangeHappen(true);
   };
 
   const handleCreateForm = () => {
@@ -90,14 +144,35 @@ const HomePage = () => {
     setOverlaycall(true);
   };
 
-  const handleCreateData = async (item: {
-    title: string;
-    description: string;
-    status: string;
-  }) => {
-    await setState((prevState) => [...prevState, item]);
-    await setOverlaycall(false);
-    await setChangeHappen(true);
+  const handleCreateData = async (item: Item) => {
+    try {
+      const createpromise = new Promise<void>(async (resolve, reject) => {
+        const response = await fetch("/api/task", {
+          method: "POST",
+          body: JSON.stringify(item),
+          headers: { "Content-Type": "application/json" },
+        });
+
+        if (!response.ok) {
+          console.error("Error creating item");
+          reject();
+        } else {
+          const newItem = await response.json();
+          setState((prevState) => [...prevState, newItem]);
+          setOverlaycall(false);
+          setChangeHappen(true);
+          resolve();
+        }
+      });
+
+      toast.promise(createpromise, {
+        loading: "Creating Task",
+        success: "Created Successfully",
+        error: "Error",
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const options = [
@@ -108,19 +183,17 @@ const HomePage = () => {
   ];
 
   const handleSelect = (value: string) => {
-    if (value == "All") {
-      //
+    if (value === "All") {
       setState(originalData.current);
     } else {
-      //
       const filterByValue = originalData.current.filter(
-        (d) => d.status == value
+        (d) => d.status === value
       );
       setState(filterByValue);
     }
   };
 
-  if (state.length == 0) {
+  if (state.length === 0) {
     return null;
   }
 
