@@ -29,6 +29,7 @@ const HomePage: React.FC = () => {
   const originalData = useRef<ItemWithId[]>([]);
   const [overlaycall, setOverlaycall] = useState(false);
   const [create, setCreate] = useState(false);
+  const [loader, setLoader] = useState(true);
   const initialState: ItemUpdate = {
     title: "",
     description: "",
@@ -44,6 +45,7 @@ const HomePage: React.FC = () => {
       .then((data: ItemWithId[]) => {
         setState(data);
         originalData.current = data;
+        setLoader(false);
       })
       .catch((error) => console.error("Error fetching data!", error));
   }, []);
@@ -192,9 +194,17 @@ const HomePage: React.FC = () => {
       setState(filterByValue);
     }
   };
-
-  if (state.length === 0) {
-    return <h1>loading....</h1>;
+  if (loader) {
+    return (
+      <div className="flex justify-center items-center m-auto relative -top-10">
+        <div className=" w-44 h-52 relative">
+          <div className="absolute left-1/2 top-0 transform -translate-x-1/2">
+            <div className="w-4 h-4 bg-red-500 rounded-full animate-bounce"></div>
+          </div>
+          <div className="absolute left-0 right-0 bottom-0 mx-auto w-24 h-24 bg-white rounded-md animate-spin"></div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -207,11 +217,12 @@ const HomePage: React.FC = () => {
           create={create}
         />
       </Overlay>
+
       <div>
         <h2 className="text-center font-semibold text-2xl mb-8 text-white">
           Task Management System
         </h2>
-        <div className="flex gap-8 items-center justify-evenly lg:justify-normal">
+        <div className="flex gap-8 items-center justify-center lg:justify-normal">
           <div className="flex gap-2">
             <h1 className="text-white font-semibold">Filter :</h1>
             <Dropdown options={options} onSelect={handleSelect} />

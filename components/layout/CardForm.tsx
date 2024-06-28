@@ -74,7 +74,7 @@ const CardForm: React.FC<CardFormProps> = ({
         />
         <textarea
           className=" lg:h-32 h-24"
-          placeholder="dsescription"
+          placeholder="description"
           value={visibility.description}
           onChange={(e) =>
             setVisibility({ ...visibility, description: e.target.value })
