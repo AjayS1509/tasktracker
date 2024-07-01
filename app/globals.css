@@ -76,11 +76,25 @@ input[type="tel"],
 input[type="text"],
 textarea {
   @apply block w-full mb-2 rounded-xl;
-  @apply border p-2 border-gray-300 bg-gray-100;
+  @apply border p-2 border-gray-300 bg-gray-100 text-black;
 }
 input[type="email"]:disabled,
 input[type="password"]:disabled,
 input[type="tel"]:disabled,
 input[type="text"]:disabled {
-  @apply bg-gray-300 cursor-not-allowed border-0 text-gray-500;
+  @apply bg-gray-300 cursor-not-allowed border-0 text-gray-500 text-black;
+}
+
+button,
+.button {
+  @apply flex justify-center gap-2 text-gray-700 font-semibold;
+  @apply border border-gray-300 rounded-xl px-6 py-2;
+}
+button[type="submit"],
+.submit {
+  @apply text-white;
+}
+button[type="submit"]:disabled,
+.submit:disabled {
+  @apply cursor-not-allowed bg-red-400;
 }
