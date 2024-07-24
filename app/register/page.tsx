@@ -22,7 +22,7 @@ export default function RegisterPage() {
         headers: { "Content-Type": "application/json" },
       });
       if (!response.ok) setError(true);
-      if (response.ok) setUserCreated(true);
+      if (response.ok) setUserCreated(true) ;
       setCreatingUser(false);
     } catch (e) {
       setError(true);
