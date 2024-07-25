@@ -44,12 +44,12 @@ const Header = () => {
       </Link>
       <div className='flex justify-between gap-4'>
       {status == "authenticated" ? 
-      <>
+      <div className='flex gap-8 items-center'>
       <div className="flex flex-row items-center justify-end my-2 ">
       <AnimatedTooltip items={[profile]} />
     </div>
       <button onClick={() => signOut()}>Logout</button>
-      </> : 
+      </div> : 
       <>
       <Link href="/login" className='button'>Login</Link>
       <Link href="/register" className='button'>Register</Link>
