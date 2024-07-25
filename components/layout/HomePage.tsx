@@ -217,11 +217,7 @@ const HomePage: React.FC = () => {
           create={create}
         />
       </Overlay>
-
       <div>
-        <h2 className="text-center font-semibold text-2xl mb-8 text-white">
-          Task Management System
-        </h2>
         <div className="flex gap-8 items-center justify-center lg:justify-normal">
           <div className="flex gap-2">
             <h1 className="text-white font-semibold">Filter :</h1>

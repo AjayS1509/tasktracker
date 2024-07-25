@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
+import Header from "@/components/ui/Header";
+import { AppProvider } from "@/components/AppContext";
+import Footer from "@/components/layout/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,8 +22,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} bg-custom-gradient-2 `}>
+        <AppProvider>
         <Toaster />
+        <Header />
         {children}
+        <Footer />
+        </AppProvider>
       </body>
     </html>
   );

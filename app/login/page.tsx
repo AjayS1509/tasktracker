@@ -2,6 +2,7 @@
 import { signIn } from "next-auth/react";
 import Image from "next/image";
 import { FormEvent, useState } from "react";
+import toast from "react-hot-toast";
 //import { signIn } from "next-auth/react";
 
 export default function LoginPage() {
@@ -9,11 +10,31 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [loginProgress, setLoginProgress] = useState(false);
 
+  function validateEmail(email: string) {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(email);
+  }
+
   async function handleFormSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setLoginProgress(true);
+    if(email.length != 0 && password.length != 0){
+      if(validateEmail(email)){
+        setLoginProgress(true);
     await signIn("credentials", { email, password, callbackUrl:"/" });
     setLoginProgress(false);
+      }else{
+        toast.error("Email is not Valid!")
+      }
+    }else{
+      if(email.length == 0 && password.length == 0){
+        toast.error("Please enter email and password!")
+      }else if(email.length  == 0){
+        toast.error("Please enter the Email id!")
+      }else {
+        toast.error("Please enter the password!")
+      }
+    }
+    
   }
 
   async function handleLoginSubmit(){
@@ -49,7 +70,7 @@ export default function LoginPage() {
           onChange={(e) => setPassword(e.target.value)}
           disabled={loginProgress}
         />
-        <button type="submit" disabled={loginProgress} 
+        <button type="submit" className="flex justify-center w-full mt-5" disabled={loginProgress} 
         //onClick={() => handleLoginSubmit()}
         >
           Login
@@ -57,8 +78,8 @@ export default function LoginPage() {
         <div className="my-4 text-center text-gray-500">
           or login with provider
         </div>
-        <button type="button" className="flex gap-4 justify-center" 
-        //onClick={() => signIn('google', {callbackUrl: "/"})}
+        <button type="button" className="flex gap-4 justify-center w-full" 
+        onClick={() => signIn('google', {callbackUrl: "/"})}
         >
           <Image src={"/google.png"} alt="" width={24} height={24} />
           Login with google

@@ -2,6 +2,8 @@
 import { useState, FormEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { signIn } from "next-auth/react";
+import toast from "react-hot-toast";
 
 export default function RegisterPage() {
   const [email, setEmail] = useState<string>("");
@@ -10,23 +12,44 @@ export default function RegisterPage() {
   const [creatingUser, setCreatingUser] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
 
+  function validateEmail(email: string) {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(email);
+  }
+
   async function handleonSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setCreatingUser(true);
     setUserCreated(false);
     setError(false);
-    try {
-      const response = await fetch("/api/register", {
-        method: "POST",
-        body: JSON.stringify({ email, password }),
-        headers: { "Content-Type": "application/json" },
-      });
-      if (!response.ok) setError(true);
-      if (response.ok) setUserCreated(true) ;
-      setCreatingUser(false);
-    } catch (e) {
-      setError(true);
+    if(email.length != 0 && password.length != 0){
+      if(validateEmail(email)){
+        try {
+          const response = await fetch("/api/register", {
+            method: "POST",
+            body: JSON.stringify({ email, password }),
+            headers: { "Content-Type": "application/json" },
+          });
+          if (!response.ok) setError(true);
+          if (response.ok) setUserCreated(true) ;
+          setCreatingUser(false);
+        } catch (e) {
+          setError(true);
+        }
+      }else{
+        toast.error("Email is not Valid!")
+      }
+    }else{
+      setCreatingUser(false)
+      if(email.length == 0 && password.length == 0){
+        toast.error("Please enter email and password!")
+      }else if(email.length  == 0){
+        toast.error("Please enter the Email id!")
+      }else {
+        toast.error("Please enter the password!")
+      }
     }
+    
   }
 
   return (
@@ -68,21 +91,21 @@ export default function RegisterPage() {
         <button
           type="submit"
           disabled={creatingUser}
-          className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md"
+          className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md w-full mt-5"
         >
           Register
         </button>
-        <div className="my-4 text-center text-gray-500">
+        <div className="my-4 text-center text-gray-700">
           or login with provider
         </div>
         <button
-          className="flex items-center gap-4 justify-center bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 py-2 px-4 rounded-md"
-          onClick={() => ""}
+          className="flex items-center gap-4 justify-center bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 py-2 px-4 rounded-md w-full"
+          onClick={() => signIn('google', {callbackUrl: "/"})}
         >
           <Image src={"/google.png"} alt="" width={24} height={24} />
           <span>Login with Google</span>
         </button>
-        <div className="text-center my-4 text-gray-500 border-t pt-4">
+        <div className="text-center my-4 text-gray-700 border-t pt-4">
           Existing account?{" "}
           <Link className="underline" href={"/login"}>
             Login here &raquo;
