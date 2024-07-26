@@ -4,7 +4,7 @@ import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { AnimatedTooltip } from './AnimatedToolTip';
 //import { people } from '@/data';
-import profile from "./profiledummy.png"
+//import profile from "./profiledummy.png"
 
 interface ItemUpdate {
     id: number;

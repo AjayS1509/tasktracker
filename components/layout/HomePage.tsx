@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import { HoverEffect } from "../ui/CardHoverEffect";
-import { projects } from "@/data";
+//import { projects } from "@/data";
 import Overlay from "../ui/Overlay";
 import CardForm from "./CardForm";
 import Dropdown from "../ui/DropDown";
@@ -22,17 +22,18 @@ interface ItemUpdate {
   idx: number;
 }
 
-interface ItemWithId extends Item {
+interface ItemWithIdandDate extends Item {
   _id: string;
+  updatedAt: string;
 }
 
 const HomePage: React.FC = () => {
-  const [state, setState] = useState<ItemWithId[]>([]);
-  const originalData = useRef<ItemWithId[]>([]);
-  const [access, setAccess] = useState(false);
-  const [overlaycall, setOverlaycall] = useState(false);
-  const [create, setCreate] = useState(false);
-  const [loader, setLoader] = useState(true);
+  const [state, setState] = useState<ItemWithIdandDate[]>([]);
+  const originalData = useRef<ItemWithIdandDate[]>([]);
+  const [access, setAccess] = useState<boolean>(false);
+  const [overlaycall, setOverlaycall] = useState<boolean>(false);
+  const [create, setCreate] = useState<boolean>(false);
+  const [loader, setLoader] = useState<boolean>(true);
   const initialState: ItemUpdate = {
     title: "",
     description: "",
@@ -40,13 +41,13 @@ const HomePage: React.FC = () => {
     idx: 0,
   };
   const [visiability, setVisability] = useState<ItemUpdate[]>([initialState]);
-  const [changeHappen, setChangeHappen] = useState(false);
+  const [changeHappen, setChangeHappen] = useState<boolean>(false);
   const session = useSession();
 
   useEffect(() => {
     fetch("/api/task")
       .then((res) => res.json())
-      .then((data: ItemWithId[]) => {
+      .then((data: ItemWithIdandDate[]) => {
         setState(data);
         originalData.current = data;
         setLoader(false);
@@ -68,7 +69,7 @@ const HomePage: React.FC = () => {
   
       const itemToDelete = state.find(
         (d) => d.title === item.title && d.description === item.description
-      ) as ItemWithId;
+      ) as ItemWithIdandDate;
   
       if (itemToDelete) {
         const deletepromise = new Promise<void>(async (resolve, reject) => {
@@ -130,7 +131,7 @@ const HomePage: React.FC = () => {
     if(access){
       const itemToUpdate = state.find(
         (d, i) => d && i === item.idx
-      ) as ItemWithId;
+      ) as ItemWithIdandDate;
   
       itemToUpdate.title = item.title;
       itemToUpdate.description = item.description;

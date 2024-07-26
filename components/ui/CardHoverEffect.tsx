@@ -2,6 +2,7 @@
 import { cn } from "@/utils/cn";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
+import DateDisplay from "./DateDisplay";
 
 export const HoverEffect = ({
   items,
@@ -13,6 +14,7 @@ export const HoverEffect = ({
     title: string;
     description: string;
     status: string;
+    updatedAt: string;
   }[];
   className?: string;
   handleClickDelete?: (item: {
@@ -31,7 +33,7 @@ export const HoverEffect = ({
   ) => void;
 }) => {
   let [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-
+  console.log("item",items)
   return (
     <div
       className={cn(
@@ -103,6 +105,9 @@ export const HoverEffect = ({
                 delete
               </button>
             </div>
+            <div>
+              <DateDisplay isoDateString = {item?.updatedAt ?? "2020-06-28T06:01:21.984Z"} />
+            </div>
           </Card>
         </div>
       ))}
@@ -125,7 +130,7 @@ export const Card = ({
       )}
     >
       <div className="relative z-50">
-        <div className="p-4">{children}</div>
+        <div className=" px-4 pt-4">{children}</div>
       </div>
     </div>
   );
