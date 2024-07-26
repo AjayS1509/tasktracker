@@ -4,6 +4,7 @@ import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { AnimatedTooltip } from './AnimatedToolTip';
 //import { people } from '@/data';
+import profile from "./profiledummy.png"
 
 interface ItemUpdate {
     id: number;
@@ -28,9 +29,9 @@ const Header = () => {
         const updatedItem = {
           ...profile,
           id: Math. floor(Math. random()*10) + 1,
-          name: session.data.user?.name || "",
+          name: session.data.user?.name || session.data.user?.email || "Guest",
           description: "",
-          image: session.data.user?.image || "https://images.unsplash.com/photo-1599566150163-29194dcaad36?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3387&q=80",
+          image: session.data.user?.image || "/profiledummy.png",
         };
         setProfile(updatedItem)
       }

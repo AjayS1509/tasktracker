@@ -6,6 +6,8 @@ import Overlay from "../ui/Overlay";
 import CardForm from "./CardForm";
 import Dropdown from "../ui/DropDown";
 import toast from "react-hot-toast";
+import { useSession } from "next-auth/react";
+import { MdLogin } from "react-icons/md";
 
 interface Item {
   title: string;
@@ -27,6 +29,7 @@ interface ItemWithId extends Item {
 const HomePage: React.FC = () => {
   const [state, setState] = useState<ItemWithId[]>([]);
   const originalData = useRef<ItemWithId[]>([]);
+  const [access, setAccess] = useState(false);
   const [overlaycall, setOverlaycall] = useState(false);
   const [create, setCreate] = useState(false);
   const [loader, setLoader] = useState(true);
@@ -38,6 +41,7 @@ const HomePage: React.FC = () => {
   };
   const [visiability, setVisability] = useState<ItemUpdate[]>([initialState]);
   const [changeHappen, setChangeHappen] = useState(false);
+  const session = useSession();
 
   useEffect(() => {
     fetch("/api/task")
@@ -48,36 +52,49 @@ const HomePage: React.FC = () => {
         setLoader(false);
       })
       .catch((error) => console.error("Error fetching data!", error));
-  }, []);
+    
+      if(session.status == "authenticated"){
+        setAccess(true);
+      }else{
+        setAccess(false);
+      }
+  }, [session.status]);
 
   const handleClickDelete = async (item: Item) => {
-    const filterDelete = state.filter(
-      (d) => !(d.title === item.title && d.description === item.description)
-    );
-
-    const itemToDelete = state.find(
-      (d) => d.title === item.title && d.description === item.description
-    ) as ItemWithId;
-
-    if (itemToDelete) {
-      const deletepromise = new Promise<void>(async (resolve, reject) => {
-        const response = await fetch(`/api/task?_id=${itemToDelete._id}`, {
-          method: "DELETE",
+    if(access){
+      const filterDelete = state.filter(
+        (d) => !(d.title === item.title && d.description === item.description)
+      );
+  
+      const itemToDelete = state.find(
+        (d) => d.title === item.title && d.description === item.description
+      ) as ItemWithId;
+  
+      if (itemToDelete) {
+        const deletepromise = new Promise<void>(async (resolve, reject) => {
+          const response = await fetch(`/api/task?_id=${itemToDelete._id}`, {
+            method: "DELETE",
+          });
+          if (response.ok) {
+            setState(filterDelete);
+            resolve();
+          } else {
+            reject();
+          }
         });
-        if (response.ok) {
-          setState(filterDelete);
-          resolve();
-        } else {
-          reject();
-        }
-      });
-
-      await toast.promise(deletepromise, {
-        loading: "Deleting...",
-        success: "Deleted Successfully",
-        error: "Error",
+  
+        await toast.promise(deletepromise, {
+          loading: "Deleting...",
+          success: "Deleted Successfully",
+          error: "Error",
+        });
+      }
+    }else{
+      toast('Login to Delete!', {
+        icon: <MdLogin />,
       });
     }
+    
   };
 
   useEffect(() => {
@@ -88,93 +105,121 @@ const HomePage: React.FC = () => {
   }, [changeHappen, state]);
 
   const handleClickUpdate = async (item: Item, idx: number) => {
-    const updatedItem = {
-      ...visiability[0],
-      title: item.title,
-      description: item.description,
-      status: item.status,
-      idx: idx,
-    };
-    const updatedArray = [...visiability];
-    updatedArray[0] = updatedItem;
-    setVisability(updatedArray);
-    setCreate(false);
-    setOverlaycall(true);
+    if(access){
+      const updatedItem = {
+        ...visiability[0],
+        title: item.title,
+        description: item.description,
+        status: item.status,
+        idx: idx,
+      };
+      const updatedArray = [...visiability];
+      updatedArray[0] = updatedItem;
+      setVisability(updatedArray);
+      setCreate(false);
+      setOverlaycall(true);
+    }else{
+      toast('Login to Update!', {
+        icon: <MdLogin />,
+      });
+    }
+    
   };
 
   const handleClickUpdateData = async (item: ItemUpdate) => {
-    const itemToUpdate = state.find(
-      (d, i) => d && i === item.idx
-    ) as ItemWithId;
-
-    itemToUpdate.title = item.title;
-    itemToUpdate.description = item.description;
-    itemToUpdate.status = item.status;
-
-    const updatepromise = new Promise<void>(async (resolve, reject) => {
-      const response = await fetch("/api/task", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(itemToUpdate),
+    if(access){
+      const itemToUpdate = state.find(
+        (d, i) => d && i === item.idx
+      ) as ItemWithId;
+  
+      itemToUpdate.title = item.title;
+      itemToUpdate.description = item.description;
+      itemToUpdate.status = item.status;
+  
+      const updatepromise = new Promise<void>(async (resolve, reject) => {
+        const response = await fetch("/api/task", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(itemToUpdate),
+        });
+        if (response.ok) {
+          resolve();
+        } else reject();
       });
-      if (response.ok) {
-        resolve();
-      } else reject();
-    });
-
-    toast.promise(
-      updatepromise.then((d) => {
-        setState((prevState) =>
-          prevState.map((state, index) =>
-            index === item.idx ? { ...state, ...item } : state
-          )
-        );
-        setOverlaycall(false);
-        setChangeHappen(true);
-      }),
-      {
-        loading: "Updating Task...",
-        success: "Updated Successfully",
-        error: "Error",
-      }
-    );
+  
+      toast.promise(
+        updatepromise.then((d) => {
+          setState((prevState) =>
+            prevState.map((state, index) =>
+              index === item.idx ? { ...state, ...item } : state
+            )
+          );
+          setOverlaycall(false);
+          setChangeHappen(true);
+        }),
+        {
+          loading: "Updating Task...",
+          success: "Updated Successfully",
+          error: "Error",
+        }
+      );
+    }else{
+      toast('Login to Update!', {
+        icon: <MdLogin />,
+      });
+    }
+    
   };
 
   const handleCreateForm = () => {
-    setVisability([initialState]);
+    if(access){
+      setVisability([initialState]);
     setCreate(true);
     setOverlaycall(true);
+    }
+    else{
+      toast('Login to Create!', {
+        icon: <MdLogin />,
+      });
+    }
   };
 
   const handleCreateData = async (item: Item) => {
-    try {
-      const createpromise = new Promise<void>(async (resolve, reject) => {
-        const response = await fetch("/api/task", {
-          method: "POST",
-          body: JSON.stringify(item),
-          headers: { "Content-Type": "application/json" },
+    if(access){
+      try {
+        const createpromise = new Promise<void>(async (resolve, reject) => {
+          const response = await fetch("/api/task", {
+            method: "POST",
+            body: JSON.stringify(item),
+            headers: { "Content-Type": "application/json" },
+          });
+  
+          if (!response.ok) {
+            console.error("Error creating item");
+            reject();
+          } else {
+            const newItem = await response.json();
+            setState((prevState) => [...prevState, newItem]);
+            setOverlaycall(false);
+            setChangeHappen(true);
+            resolve();
+          }
         });
-
-        if (!response.ok) {
-          console.error("Error creating item");
-          reject();
-        } else {
-          const newItem = await response.json();
-          setState((prevState) => [...prevState, newItem]);
-          setOverlaycall(false);
-          setChangeHappen(true);
-          resolve();
-        }
+  
+        toast.promise(createpromise, {
+          loading: "Creating Task",
+          success: "Created Successfully",
+          error: "Error",
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    }else{
+      toast('Login to Create!', {
+        icon: <MdLogin />,
       });
-
-      toast.promise(createpromise, {
-        loading: "Creating Task",
-        success: "Created Successfully",
-        error: "Error",
-      });
-    } catch (error) {
-      console.error(error);
     }
+    
   };
 
   const options = [
