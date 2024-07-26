@@ -33,7 +33,6 @@ export const HoverEffect = ({
   ) => void;
 }) => {
   let [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  console.log("item",items)
   return (
     <div
       className={cn(
