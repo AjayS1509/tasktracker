@@ -70,12 +70,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} bg-custom-gradient-2 `}>
+      <main className="flex min-h-screen flex-col items-center justify-between pt-4 pb-0 lg:px-24 lg:max-w-screen-xl mx-auto">
         <AppProvider>
         <Toaster />
         <Header />
         {children}
         <Footer />
         </AppProvider>
+        </main>
       </body>
     </html>
   );

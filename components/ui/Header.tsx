@@ -39,7 +39,7 @@ const Header = () => {
     
   return (
     <>
-    <nav className="flex items-center py-3 justify-between gap-8 mr-4">
+    <nav className="flex items-center py-3 justify-between gap-8 mr-4 w-full">
       <Link href='/' className='ml-5 text-xl'>
         Home
       </Link>
@@ -59,7 +59,7 @@ const Header = () => {
 }
 </div>
     </nav>
-    <h2 className="text-center font-semibold text-2xl text-white">
+    <h2 className="text-center font-semibold text-2xl text-white pb-4">
           Task Management System
         </h2>
     </>
