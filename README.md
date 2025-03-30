@@ -6,7 +6,7 @@ A task management system is a web application designed to help users organize an
 
 ## Demo
 
-[https://task-management-system-alpha.vercel.app](https://tasktrackerstatus.vercel.app/)
+[https://tasktrackerstatus.vercel.app](https://tasktrackerstatus.vercel.app/)
 ![tasktracker](https://github.com/user-attachments/assets/cf19bd77-8266-4ae0-b0f3-f57ecafa6834)
 
 ## Documentation
