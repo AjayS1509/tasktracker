@@ -1,5 +1,5 @@
 
-# Task Management System
+# Task Tracker
 
 A task management system is a web application designed to help users organize and track tasks efficiently. Users can add tasks with titles, descriptions, and status indicators, enabling them to prioritize, manage progress, and track completion. The system includes Google login managed by NextAuth and uses MongoDB Cloud for data storage.
 
