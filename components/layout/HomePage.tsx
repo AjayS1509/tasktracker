@@ -30,7 +30,7 @@ interface ItemWithIdandDate extends Item {
 const HomePage: React.FC = () => {
   const [state, setState] = useState<ItemWithIdandDate[]>([]);
   const originalData = useRef<ItemWithIdandDate[]>([]);
-  const [access, setAccess] = useState<boolean>(false);
+  const [access, setAccess] = useState<boolean>(true);
   const [overlaycall, setOverlaycall] = useState<boolean>(false);
   const [create, setCreate] = useState<boolean>(false);
   const [loader, setLoader] = useState<boolean>(true);
@@ -54,11 +54,11 @@ const HomePage: React.FC = () => {
       })
       .catch((error) => console.error("Error fetching data!", error));
     
-      if(session.status == "authenticated"){
-        setAccess(true);
-      }else{
-        setAccess(false);
-      }
+      // if(session.status == "authenticated"){
+      //   setAccess(true);
+      // }else{
+      //   setAccess(false);
+      // }
   }, [session.status]);
 
   const handleClickDelete = async (item: Item) => {
@@ -274,7 +274,7 @@ const HomePage: React.FC = () => {
             onClick={handleCreateForm}
             className="px-6 py-2 border border-blue-400 rounded-lg bg-blue-500"
           >
-            Create
+            Add Task
           </button>
         </div>
         <HoverEffect

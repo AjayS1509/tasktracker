@@ -60,7 +60,7 @@ const Header = () => {
 </div>
     </nav>
     <h2 className="text-center font-semibold text-2xl text-white pb-4">
-          Task Management System
+          Task Tracker
         </h2>
     </>
   )
